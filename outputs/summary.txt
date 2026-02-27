@@ -1,0 +1,15 @@
+YOLO11n-Project: Inference Summary
+
+PyTorch Model Detections:
+  [0] Box: [     434.05      90.177         757      433.28], Score: 0.95, Label: giraffe
+  [1] Box: [     94.572      87.918      272.28      444.33], Score: 0.95, Label: giraffe
+  [2] Box: [     274.85      284.91      473.67      440.88], Score: 0.89, Label: car
+  [3] Box: [      458.4      309.18      538.96      431.66], Score: 0.85, Label: car
+  [4] Box: [     315.09      305.32      346.08      331.05], Score: 0.31, Label: person
+
+ONNX Model Detections:
+  [0] Box: [     434.01      88.792      757.07      431.92], Score: 0.95, Label: giraffe
+  [1] Box: [     94.535       86.49       272.2      442.51], Score: 0.95, Label: giraffe
+  [2] Box: [     274.82       283.7      473.66      438.89], Score: 0.90, Label: car
+  [3] Box: [     458.36      307.99      538.82      430.32], Score: 0.85, Label: car
+  [4] Box: [     315.18       304.1      346.07      329.75], Score: 0.31, Label: person

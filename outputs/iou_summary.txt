@@ -1,0 +1,8 @@
+IoU Scores (PyTorch vs ONNX):
+Detection 0: IoU = 0.992
+Detection 1: IoU = 0.990
+Detection 2: IoU = 0.979
+Detection 3: IoU = 0.977
+Detection 4: IoU = 0.904
+
+Mean IoU: 0.968
