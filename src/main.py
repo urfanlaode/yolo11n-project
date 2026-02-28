@@ -1,11 +1,17 @@
 # This script delegates the workflow to the DetectionDomain.
 
+# Paths
+import glob
 import os
 
 from domains.detection_domain import DetectionDomain
 
-# Paths
-INPUT_IMAGE_PATH = os.path.join("inputs", "image.png")
+# Dynamically find image.* in inputs directory
+image_candidates = glob.glob(os.path.join("inputs", "image.*"))
+if image_candidates:
+    INPUT_IMAGE_PATH = image_candidates[0]
+else:
+    INPUT_IMAGE_PATH = None  # Or handle error appropriately
 PT_MODEL_PATH = os.path.join("models", "yolo11n.pt")
 ONNX_MODEL_PATH = os.path.join("models", "yolo11n.onnx")
 OUTPUT_PT_IMAGE = os.path.join("outputs", "pt_result.png")

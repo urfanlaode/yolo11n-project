@@ -1,14 +1,18 @@
+import glob
 import os
 
 import cv2
 import torch
 
-INPUT_IMAGE_PATH = os.path.join("inputs", "image.png")
+# Dynamically find the first image file named 'image.*' in the inputs directory
+image_candidates = glob.glob(os.path.join("inputs", "image.*"))
+INPUT_IMAGE_PATH = image_candidates[0] if image_candidates else None
 
 
 def load_image(image_path, img_size=640):
     """
     Load and preprocess an image for model inference.
+    Supports PNG, JPG, JPEG, WEBP, and other formats supported by OpenCV.
 
     Returns:
         orig_img: Original BGR image.
@@ -16,9 +20,10 @@ def load_image(image_path, img_size=640):
         orig_shape: Original image shape.
         resized_shape: Resized image shape.
     """
-    img = cv2.imread(image_path)
+    # Try reading with OpenCV (supports png, jpg, jpeg, webp, bmp, tiff, etc.)
+    img = cv2.imread(image_path, cv2.IMREAD_COLOR)
     if img is None:
-        raise FileNotFoundError(f"Image not found: {image_path}")
+        raise FileNotFoundError(f"Image not found or unsupported format: {image_path}")
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img_resized = cv2.resize(img_rgb, (img_size, img_size))
     img_tensor = torch.from_numpy(img_resized).permute(2, 0, 1).float() / 255.0
@@ -55,29 +60,28 @@ def save_detection_image(
             else f"{int(label)}:{score:.2f}"
         )
         cv2.rectangle(img, (x1, y1), (x2, y2), color, 1)
-        font_scale = 0.4
-        font_thickness = 1
+        # Make font size proportional to image height (or width), but smaller
+        font_scale = (
+            max(img.shape[0], img.shape[1]) / 1600.0
+        )  # Increased divisor for smaller font
+        font_thickness = max(1, int(font_scale * 2))
         (text_width, text_height), baseline = cv2.getTextSize(
             label_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, font_thickness
         )
         margin_x, margin_y = 2, 2
         text_x = x1 + margin_x
-        text_y = y1 + text_height + margin_y
-        cv2.rectangle(
-            img,
-            (text_x - 1, text_y - text_height - 1),
-            (text_x + text_width + 1, text_y + baseline + 1),
-            color,
-            -1,
-        )
-        text_color = (255, 255, 255) if sum(color) < 384 else (0, 0, 0)
+        text_y = max(0, y1 - text_height - margin_y)
+        # Draw label text only, no background, using border color
         cv2.putText(
             img,
             label_text,
-            (text_x, text_y),
+            (
+                text_x,
+                text_y + text_height,
+            ),  # OpenCV puts text baseline at y, so add text_height
             cv2.FONT_HERSHEY_SIMPLEX,
             font_scale,
-            text_color,
+            color,  # Use border color for text
             font_thickness,
             lineType=cv2.LINE_AA,
         )
